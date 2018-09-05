@@ -11,8 +11,6 @@ const Money = require("./models/money.js")
 bot.commands = new Discord.Collection();
 let xp = require("./xp.json");
 let purple = botconfig.purple;
-let cooldown = new Set();
-let cdseconds = 5;
 
 
 fs.readdir("./commands/", (err, files) => {
@@ -74,13 +72,6 @@ bot.on("message", async message => {
     if (err) console.log(err)
   });
   let prefix = prefixes[message.guild.id].prefixes;
-  if (cooldown.has(message.author.id)) {
-    message.delete();
-    return message.reply("You have to wait " + cdseconds + " seconds between commands.")
-  }
-  if (!message.member.hasPermission("ADMINISTRATOR")) {
-    cooldown.add(message.author.id);
-  }
 
 
   let messageArray = message.content.split(" ");
@@ -95,12 +86,14 @@ bot.on("message", async message => {
     console.log(coinstoadd + " coins");
     Money.findOne({
       userID: message.author.id,
+      username: message.author.username,
       serverID: message.guild.id
     }, (err, money) => {
       if (err) console.log(err);
       if (!money) {
         const newMoney = new Money({
           userID: message.author.id,
+          username: message.author.username,
           serverID: message.guild.id,
           money: coinstoadd
         })
@@ -113,10 +106,6 @@ bot.on("message", async message => {
 
   }
 
-
-  setTimeout(() => {
-    cooldown.delete(message.author.id)
-  }, cdseconds * 1000)
 
 });
 

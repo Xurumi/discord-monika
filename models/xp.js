@@ -2,8 +2,10 @@ const mongoose = require("mongoose");
 
 const xpSchema = mongoose.Schema({
   userID: String,
+  username: String,
   serverID: String,
-  xp: Number
+  xp: Number,
+  level: Number
 
 })
 

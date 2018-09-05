@@ -3,31 +3,33 @@ const mongoose = require("mongoose");
 mongoose.connect("mongodb://localhost:27017/Monika", {
   useNewUrlParser: true
 });
-const Money = require("../models/money.js");
+const XP = require("../models/xp.js");
 
 module.exports.run = async (bot, message, args) => {
   await message.delete();
   if (!message.member.hasPermission("MANAGE_MESSAGES")) return errors.noPerms(message, "MANAGE_MESSAGES");
 
 
-  Money.findOne({
+  XP.findOne({
     userID: message.author.id,
     username: message.author.username,
     serverID: message.guild.id
-  }, (err, money) => {
+  }, (err, xp) => {
     if (err) console.log(err);
     let embed = new Discord.RichEmbed()
       .setAuthor(message.author.username)
-      .setTitle("Coins")
+      .setTitle("XP")
       .setColor("#4000FF")
       .setThumbnail(message.author.displayAvatarURL);
-    if (!money) {
-      embed.addField("Coins", "0", true);
+    if (!xp) {
+      embed.addField("XP", "0", true)
+        .addField("Level", "1", true);
       return message.channel.send(embed).then(msg => {
         msg.delete(5000)
       });
     } else {
-      embed.addField("Coins", money.money, true);
+      embed.addField("XP", xp.xp, true)
+        .addField("Level", xp.level, true);
       return message.channel.send(embed).then(msg => {
         msg.delete(5000);
       });
@@ -37,5 +39,5 @@ module.exports.run = async (bot, message, args) => {
 }
 
 module.exports.help = {
-  name: "coins"
+  name: "level"
 }
